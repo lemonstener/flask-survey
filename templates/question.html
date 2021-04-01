@@ -1,12 +1,30 @@
 {% extends 'base.html' %}
 {% block title %}Homepage{% endblock %}
 {% block content %}
+{% if error %}
+{% for msg in get_flashed_messages() %}
+<p class="error">{{msg}}</p>
+{% endfor %}
+<form action="/hub">
+    <button>RETURN</button>
+</form>
+{% else %}
 <p>{{question}}</p>
 <form action="/answer" method="POST">
     <label for="yes">Yes</label>
     <input type="radio" name="option" id="yes" value="yes">
     <label for="no">No</label>
     <input type="radio" name="option" id="no" value="no">
-    <button>Next</button>
+    <button disabled="true" id="btn">Next</button>
 </form>
+<script>
+    inputs = document.querySelectorAll('input[type=radio')
+    button = document.querySelector('#btn')
+    inputs.forEach(element => {
+        element.addEventListener('click', function () {
+            button.disabled = false
+        })
+    });
+</script>
+{% endif %}
 {% endblock %}

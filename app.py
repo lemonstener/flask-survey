@@ -19,29 +19,30 @@ def home_page():
 
 @app.route('/hub')
 def redirect_to_page():
-    if len(responses) < 4:
-        return redirect('/question')
+    if len(responses) < len(satisfaction_survey.questions):
+        return redirect(f'/questions/{len(responses)}')
     else:
         return redirect('/thankyou')
 
 
-@app.route('/question')
-def show_question():
-    question = satisfaction_survey.questions[len(responses)].question
-    return render_template('question.html', question=question)
+@app.route('/questions/<int:id>')
+def show_question(id):
+    if id != len(responses):
+        flash('Invalid page', 'error')
+        return render_template('question.html', error=True)
+    else:
+        question = satisfaction_survey.questions[id].question
+        return render_template('question.html', question=question)
 
 
 @app.route('/answer', methods=['POST'])
 def update_responses():
     answer = request.form['option']
-    print(answer)
     responses.append(answer)
-    print(responses)
     return redirect('/hub')
 
 
 @app.route('/thankyou')
 def reset_survey():
     responses = []
-    print(responses)
     return render_template('thankyou.html')
