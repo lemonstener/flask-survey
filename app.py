@@ -3,8 +3,6 @@ from flask_debugtoolbar import DebugToolbarExtension
 from surveys import satisfaction_survey
 
 
-RESPONSES_KEY = 'responses'
-
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'chickenz'
 app.config['DEBUG_TB_INTERCEPT_REDIRECTS'] = False
@@ -20,21 +18,22 @@ def start_session():
 
 @app.route('/begin', methods=['POST'])
 def home_page():
-    session[RESPONSES_KEY] = []
+    session['responses'] = []
+    print(session['responses'])
     return redirect('/hub')
 
 
 @app.route('/hub')
 def redirect_to_page():
-    if len(session[RESPONSES_KEY]) < len(satisfaction_survey.questions):
-        return redirect(f'/questions/{len(session[RESPONSES_KEY])}')
+    if len(session['responses']) < len(satisfaction_survey.questions):
+        return redirect(f'/questions/{len(session["responses"])}')
     else:
         return redirect('/thankyou')
 
 
 @app.route('/questions/<int:id>')
 def show_question(id):
-    if id != len(session[RESPONSES_KEY]):
+    if id != len(session['responses']):
         flash('Invalid page', 'error')
         return render_template('question.html', error=True)
     else:
@@ -45,9 +44,9 @@ def show_question(id):
 @app.route('/answer', methods=['POST'])
 def update_responses():
     answer = request.form['option']
-    responses = session[RESPONSES_KEY]
+    responses = session['responses']
     responses.append(answer)
-    session[RESPONSES_KEY] = responses
+    session['responses'] = responses
     return redirect('/hub')
 
 
