@@ -2,4 +2,8 @@
 {% block title %}Thank you{% endblock %}
 {% block content %}
 <h1>Thank you for participating!</h1>
+<p>You may retake the survey if you wish</p>
+<form action="/begin" method="POST">
+    <button>RESTART</button>
+</form>
 {% endblock %}
